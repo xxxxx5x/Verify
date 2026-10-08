@@ -2,811 +2,106 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>CDMS — Clinic &amp; Diagnostic Center Management System</title>
-<meta name="description" content="Laboratory, imaging, cardiology and APE/PEME in one system built for Philippine clinics and diagnostic centers. Senior/PWD discounts, BIR receipts, HMO/LOA, QR-verified results. From ₱3,000 a month.">
-<meta property="og:title" content="CDMS — Clinic & Diagnostic Center Management System">
-<meta property="og:description" content="From registration to released result, in one system built for Philippine clinics. From ₱3,000 a month.">
-<meta property="og:type" content="website">
-<meta name="theme-color" content="#0f6b5f">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230f6b5f'/%3E%3Crect x='12' y='5' width='8' height='5' rx='1.5' fill='%23c9b6ec'/%3E%3Crect x='12.5' y='10' width='7' height='17' rx='3.5' fill='%23fff'/%3E%3C/svg%3E">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Result Verification</title>
+<meta name="description" content="Check that a printed laboratory or imaging result is genuine by scanning its QR code.">
+<meta name="robots" content="noindex">
 <style>
   :root {
-    --ground: #f4f6f4;
-    --surface: #ffffff;
-    --ink: #15242a;
-    --muted: #56676c;
-    --line: #d9e0dd;
-    --accent: #0f6b5f;
-    --accent-strong: #0b554b;
-    --accent-soft: #e2f0ec;
-    --accent-ink: #ffffff;
-    --tube: #7a5ea8;
-    --tube-soft: #efe9f7;
-    --flag-high: #b4412f;
-    --flag-low: #2f5fb4;
-    --display: "Sora", "Segoe UI", system-ui, sans-serif;
-    --body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
-    --mono: "IBM Plex Mono", ui-monospace, Consolas, monospace;
+    --bg: #f4f7f5; --card: #ffffff; --text: #14231a; --muted: #5b6b61; --line: #dfe7e2;
+    --brand: #1a9e48; --brand-soft: #e7f6ec; --bad: #b42318;
   }
   @media (prefers-color-scheme: dark) {
-    :root {
-      color-scheme: dark;
-      --ground: #0f181b;
-      --surface: #162226;
-      --ink: #e4ecea;
-      --muted: #9aaeb0;
-      --line: #2a3a3e;
-      --accent: #4fbfa9;
-      --accent-strong: #6fd3bf;
-      --accent-soft: #173a35;
-      --accent-ink: #08201c;
-      --tube: #b49be0;
-      --tube-soft: #2a2238;
-      --flag-high: #f08a78;
-      --flag-low: #8fb0f0;
-    }
+    :root { --bg: #0f1612; --card: #18221c; --text: #e6efe9; --muted: #9db0a4; --line: #27352c; --brand: #4cc274; --brand-soft: #1b3324; --bad: #f97066; }
   }
-
-  *, *::before, *::after { box-sizing: border-box; }
-  html { scroll-behavior: smooth; }
-  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
-  body { margin: 0; background: var(--ground); color: var(--ink); font: 16px/1.6 var(--body); -webkit-font-smoothing: antialiased; }
-  img { max-width: 100%; }
-  a { color: inherit; }
-  h1, h2, h3 { font-family: var(--display); line-height: 1.15; text-wrap: balance; margin: 0; }
-  p { margin: 0; }
-  .container { max-width: 1120px; margin: 0 auto; padding-inline: 20px; }
-  .eyebrow { font-size: 12px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); }
-  .lede { color: var(--muted); font-size: 18px; max-width: 60ch; }
-  .num { font-family: var(--mono); font-variant-numeric: tabular-nums; }
-  :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
-
-  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 12px 22px; border-radius: 8px; font-weight: 600; font-size: 15px; text-decoration: none; border: 2px solid transparent; transition: background .15s, border-color .15s; }
-  .btn-primary { background: var(--accent); color: var(--accent-ink); }
-  .btn-primary:hover { background: var(--accent-strong); }
-  .btn-ghost { border-color: var(--line); color: var(--ink); background: var(--surface); }
-  .btn-ghost:hover { border-color: var(--accent); }
-
-  /* nav */
-  .nav { position: sticky; top: 0; z-index: 10; background: color-mix(in srgb, var(--ground) 88%, transparent); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); padding-top: env(safe-area-inset-top, 0px); }
-  .nav .container { display: flex; align-items: center; justify-content: space-between; gap: 16px; height: 64px; }
-  .brand { display: flex; align-items: center; gap: 10px; font-family: var(--display); font-weight: 800; font-size: 20px; text-decoration: none; letter-spacing: -.01em; }
-  .brand svg { width: 30px; height: 30px; flex: none; }
-  .nav-links { display: flex; align-items: center; gap: 26px; font-size: 15px; }
-  .nav-links a:not(.btn) { text-decoration: none; color: var(--muted); }
-  .nav-links a:not(.btn):hover { color: var(--ink); }
-  .nav .btn { padding: 9px 16px; }
-  .nav-links a.signin { color: var(--ink); font-weight: 600; }
-  @media (max-width: 760px) { .nav-links a:not(.btn):not(.signin) { display: none; } }
-
-  /* hero */
-  .hero { padding-block: 64px 72px; }
-  .hero .container { display: grid; grid-template-columns: 1.1fr .9fr; gap: 56px; align-items: center; }
-  .hero h1 { font-size: clamp(34px, 5.2vw, 56px); font-weight: 800; letter-spacing: -.02em; }
-  .hero h1 em { font-style: normal; color: var(--accent); }
-  .hero-copy { display: grid; gap: 22px; }
-  .hero-ctas { display: flex; gap: 12px; flex-wrap: wrap; }
-  .hero-note { font-size: 14px; color: var(--muted); }
-  @media (max-width: 900px) { .hero .container { grid-template-columns: 1fr; gap: 40px; } }
-
-  /* the report mock */
-  .report { position: relative; background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 24px; box-shadow: 0 24px 60px -24px rgba(15, 50, 45, .35); font-size: 13px; max-width: 460px; justify-self: center; width: 100%; }
-  .report-head { display: flex; justify-content: space-between; gap: 12px; border-bottom: 2px solid var(--ink); padding-bottom: 12px; margin-bottom: 12px; }
-  .report-head strong { font-family: var(--display); font-size: 15px; display: block; }
-  .report-head span { color: var(--muted); font-size: 12px; }
-  .report-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 16px; margin-bottom: 14px; color: var(--muted); font-size: 12px; }
-  .report-meta b { color: var(--ink); font-weight: 500; }
-  .report table { width: 100%; border-collapse: collapse; }
-  .report th { text-align: left; font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); font-weight: 600; padding: 6px 0; border-bottom: 1px solid var(--line); }
-  .report td { padding: 6px 0; border-bottom: 1px solid var(--line); font-variant-numeric: tabular-nums; }
-  .report td.v { font-family: var(--mono); font-weight: 600; }
-  .report td.r { color: var(--muted); font-family: var(--mono); font-size: 12px; }
-  .flag { display: inline-block; min-width: 20px; text-align: center; font-family: var(--mono); font-size: 11px; font-weight: 600; border-radius: 4px; padding: 1px 4px; }
-  .flag.h { color: var(--flag-high); background: color-mix(in srgb, var(--flag-high) 14%, transparent); }
-  .flag.l { color: var(--flag-low); background: color-mix(in srgb, var(--flag-low) 14%, transparent); }
-  .report-foot { display: flex; justify-content: space-between; align-items: end; gap: 12px; margin-top: 16px; }
-  .sig { font-size: 11px; color: var(--muted); }
-  .sig strong { display: block; color: var(--ink); font-size: 12px; font-weight: 600; border-top: 1px solid var(--ink); padding-top: 4px; margin-top: 18px; min-width: 150px; }
-  .qr { width: 64px; height: 64px; flex: none; }
-  .stamp { position: absolute; right: -14px; top: 38%; transform: rotate(-8deg); background: var(--surface); border: 2px solid var(--accent); color: var(--accent); border-radius: 8px; padding: 8px 14px; font-family: var(--display); font-weight: 700; font-size: 13px; display: flex; align-items: center; gap: 8px; box-shadow: 0 10px 24px -12px rgba(15, 80, 70, .5); }
-  .stamp svg { width: 18px; height: 18px; }
-  @media (max-width: 520px) { .stamp { right: 8px; top: auto; bottom: -18px; } }
-
-  /* local strip */
-  .local { border-block: 1px solid var(--line); background: var(--surface); padding-block: 22px; }
-  .local .container { display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: center; }
-  .local .label { font-size: 13px; font-weight: 600; color: var(--muted); margin-right: 6px; }
-  .chip { font-size: 14px; font-weight: 500; padding: 6px 12px; border-radius: 99px; background: var(--accent-soft); color: var(--ink); }
-
-  section.block { padding-block: 88px; }
-  .block-head { display: grid; gap: 14px; margin-bottom: 44px; max-width: 720px; }
-  .block-head h2 { font-size: clamp(28px, 3.6vw, 40px); font-weight: 700; letter-spacing: -.015em; }
-
-  /* demo video */
-  .demo-frame { position: relative; border-radius: 12px; overflow: hidden; border: 1px solid var(--line); background: #04111f; box-shadow: 0 30px 70px -30px rgba(15, 50, 45, .45); aspect-ratio: 16 / 9; }
-  .demo-frame iframe { display: block; width: 100%; height: 100%; border: 0; }
-  .chapters { list-style: none; margin: 22px 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 8px; }
-  .chapters button { width: 100%; display: flex; align-items: baseline; gap: 10px; text-align: left; font: inherit; font-size: 14px; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 9px 12px; cursor: pointer; transition: border-color .15s, background .15s; }
-  .chapters button:hover { border-color: var(--accent); }
-  .chapters button[aria-current="true"] { border-color: var(--accent); background: var(--accent-soft); }
-  .chapters .t { font-family: var(--mono); font-size: 12px; color: var(--accent); flex: none; min-width: 38px; }
-
-  /* workflow */
-  .flow { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(6, 1fr); gap: 0; counter-reset: step; }
-  .flow li { position: relative; padding: 0 14px 0 0; display: grid; gap: 8px; align-content: start; }
-  .flow li::before { counter-increment: step; content: counter(step); width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; background: var(--accent); color: var(--accent-ink); font-family: var(--display); font-weight: 700; font-size: 15px; position: relative; z-index: 1; }
-  .flow li::after { content: ""; position: absolute; top: 18px; left: 36px; right: 0; height: 2px; background: var(--line); }
-  .flow li:last-child::after { display: none; }
-  .flow h3 { font-size: 16px; font-weight: 600; }
-  .flow p { font-size: 14px; color: var(--muted); }
-  @media (max-width: 900px) {
-    .flow { grid-template-columns: 1fr; gap: 22px; }
-    .flow li { grid-template-columns: 36px 1fr; column-gap: 16px; padding: 0; }
-    .flow li::before { grid-row: span 2; }
-    .flow li::after { top: 40px; left: 17px; right: auto; width: 2px; height: calc(100% - 18px); }
-  }
-
-  /* highlights */
-  .highlights { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
-  .hl { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 28px; display: grid; gap: 12px; align-content: start; }
-  .hl .icon { width: 44px; height: 44px; border-radius: 10px; display: grid; place-items: center; background: var(--accent-soft); color: var(--accent); }
-  .hl .icon svg { width: 24px; height: 24px; }
-  .hl h3 { font-size: 20px; font-weight: 600; }
-  .hl p { color: var(--muted); font-size: 15px; }
-  @media (max-width: 900px) { .highlights { grid-template-columns: 1fr; } }
-
-  /* modules */
-  .modules { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
-  .mod { background: var(--surface); padding: 24px; display: grid; gap: 8px; align-content: start; }
-  .mod h3 { font-size: 16px; font-weight: 600; }
-  .mod p { font-size: 14px; color: var(--muted); }
-  @media (max-width: 960px) { .modules { grid-template-columns: repeat(2, 1fr); } }
-  @media (max-width: 520px) { .modules { grid-template-columns: 1fr; } }
-
-  /* occupational spotlight */
-  .spot { background: var(--tube-soft); }
-  .spot .container { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: center; }
-  .spot .eyebrow { color: var(--tube); }
-  .spot-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; }
-  .spot-list li { display: grid; grid-template-columns: 22px 1fr; gap: 12px; }
-  .spot-list li::before { content: ""; width: 10px; height: 10px; margin-top: 8px; margin-left: 4px; border-radius: 50%; background: var(--tube); }
-  .spot-list b { display: block; font-weight: 600; }
-  .spot-list span { color: var(--muted); font-size: 15px; }
-  .hr-view { background: var(--surface); border-radius: 12px; border: 1px solid var(--line); overflow: hidden; font-size: 14px; }
-  .hr-view header { padding: 14px 18px; border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
-  .hr-view header b { font-family: var(--display); }
-  .hr-view header span { color: var(--muted); font-size: 13px; }
-  .hr-scroll { overflow-x: auto; }
-  .hr-view table { width: 100%; border-collapse: collapse; min-width: 380px; }
-  .hr-view th, .hr-view td { text-align: left; padding: 10px 18px; border-bottom: 1px solid var(--line); }
-  .hr-view th { font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
-  .hr-view tr:last-child td { border-bottom: 0; }
-  .pill { font-size: 12px; font-weight: 600; padding: 2px 10px; border-radius: 99px; white-space: nowrap; }
-  .pill.fit { background: var(--accent-soft); color: var(--accent); }
-  .pill.restr { background: color-mix(in srgb, #c98a1a 18%, transparent); color: #9a6a10; }
-  .pill.pend { background: var(--ground); color: var(--muted); }
-  .hr-note { padding: 12px 18px; font-size: 12px; color: var(--muted); background: var(--ground); }
-  @media (prefers-color-scheme: dark) { .pill.restr { color: #e7b659; } }
-  @media (max-width: 900px) { .spot .container { grid-template-columns: 1fr; gap: 36px; } }
-
-  /* pricing */
-  .plans { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; align-items: stretch; max-width: 1180px; margin-inline: auto; }
-  .plan { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 28px; display: grid; grid-template-rows: auto auto auto 1fr auto; gap: 16px; }
-  .plan.featured { border: 2px solid var(--accent); }
-  .plan-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; }
-  .plan h3 { font-size: 20px; }
-  .tag { font-size: 12px; font-weight: 600; padding: 2px 10px; border-radius: 99px; background: var(--accent); color: var(--accent-ink); }
-  .for { color: var(--muted); font-size: 14px; }
-  .price { display: flex; align-items: baseline; gap: 6px; flex-wrap: wrap; }
-  .price .amt { font-family: var(--display); font-size: 40px; font-weight: 800; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
-  .price .per { color: var(--muted); font-size: 14px; }
-  ul.feat { list-style: none; margin: 0; padding: 0; display: grid; gap: 9px; align-content: start; }
-  ul.feat li { position: relative; padding-left: 24px; font-size: 14px; }
-  ul.feat li::before { content: ""; position: absolute; left: 2px; top: .45em; width: 12px; height: 7px; border-left: 2px solid var(--accent); border-bottom: 2px solid var(--accent); transform: rotate(-45deg); }
-  ul.feat li.inherit { font-weight: 600; color: var(--muted); padding-left: 0; }
-  ul.feat li.inherit::before { display: none; }
-  .plan .btn { width: 100%; }
-  .plan-cta { display: grid; gap: 8px; }
-  .cta-note { font-size: 13px; color: var(--muted); text-align: center; margin: 0; }
-  .addons { border-top: 1px solid var(--line); padding-top: 14px; display: grid; gap: 10px; }
-  .addons-title { font-size: 12px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
-  .addons ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
-  .addons li { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; font-size: 14px; }
-  .addons li span { font-weight: 600; }
-  .addons a { color: var(--accent); font-size: 13px; font-weight: 600; text-decoration: none; }
-  .addons a:hover { text-decoration: underline; }
-  .pricing-notes { margin-top: 28px; display: grid; grid-template-columns: 1fr; gap: 20px; }
-  .note-card { border: 1px solid var(--line); border-radius: 12px; padding: 22px 24px; display: grid; gap: 8px; background: var(--surface); }
-  .note-card.offer { background: var(--tube-soft); border-color: transparent; }
-  .note-card.offer .eyebrow { color: var(--tube); }
-  .note-card h3 { font-size: 18px; font-weight: 600; }
-  .note-card p, .note-card li { color: var(--muted); font-size: 14px; }
-  .note-card ul { margin: 0; padding-left: 18px; display: grid; gap: 4px; }
-  .pricing-sub { margin-top: 56px; display: grid; gap: 12px; }
-  .pricing-sub > h3 { font-size: 24px; font-weight: 700; }
-  .pricing-sub > p { color: var(--muted); max-width: 60ch; }
-  .fees-wrap { margin-top: 8px; overflow-x: auto; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; }
-  table.fees { width: 100%; border-collapse: collapse; min-width: 480px; }
-  .fees th, .fees td { text-align: left; padding: 16px 20px; border-bottom: 1px solid var(--line); vertical-align: top; }
-  .fees tr:last-child td { border-bottom: 0; }
-  .fees th { font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
-  .fees .amt { text-align: right; white-space: nowrap; }
-  .fees td.amt { font-family: var(--mono); font-variant-numeric: tabular-nums; }
-  .fees td small { display: block; color: var(--muted); font-size: 13px; }
-  .calc { margin-top: 8px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 28px; display: grid; grid-template-columns: 1fr 1fr; gap: 36px; }
-  .calc-fields { display: grid; gap: 18px; align-content: start; min-width: 0; }
-  .calc-label { display: block; font-weight: 600; font-size: 14px; margin-bottom: 6px; }
-  .calc select, .calc input[type="number"] { display: block; width: 100%; max-width: 100%; font: inherit; padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--ground); color: var(--ink); }
-  .calc-checks { display: grid; gap: 8px; }
-  .calc-checks label { display: flex; gap: 10px; align-items: center; font-size: 15px; cursor: pointer; }
-  .calc-checks input { width: 18px; height: 18px; margin: 0; accent-color: var(--accent); }
-  .calc-totals { display: grid; gap: 10px; align-content: start; min-width: 0; }
-  .calc-row { display: flex; justify-content: space-between; gap: 12px; font-size: 15px; }
-  .calc-row > span:first-child { color: var(--muted); }
-  .calc-row s { color: var(--muted); font-weight: 400; }
-  .calc-row.big { border-top: 1px solid var(--line); padding-top: 14px; margin-top: 4px; font-weight: 600; align-items: baseline; }
-  .calc-row.big > span:first-child { color: var(--ink); font-size: 16px; }
-  .calc-row.big .num { font-family: var(--display); font-size: 26px; font-weight: 800; }
-  .calc-note { font-size: 13px; color: var(--muted); }
-  @media (max-width: 760px) { .calc { grid-template-columns: 1fr; padding: 22px; gap: 28px; } }
-  @media (max-width: 960px) { .plans { grid-template-columns: 1fr; max-width: 520px; } .pricing-notes { grid-template-columns: 1fr; } }
-
-  /* why */
-  .why { display: grid; grid-template-columns: repeat(3, 1fr); gap: 36px; }
-  .why div { display: grid; gap: 8px; align-content: start; border-top: 2px solid var(--ink); padding-top: 18px; }
-  .why h3 { font-size: 18px; font-weight: 600; }
-  .why p { color: var(--muted); font-size: 15px; }
-  @media (max-width: 900px) { .why { grid-template-columns: 1fr; gap: 28px; } }
-
-  /* faq */
-  .faq { display: grid; gap: 10px; max-width: 800px; }
-  .faq details { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 0 22px; }
-  .faq summary { cursor: pointer; list-style: none; padding: 18px 0; font-weight: 600; display: flex; justify-content: space-between; gap: 16px; }
-  .faq summary::-webkit-details-marker { display: none; }
-  .faq summary::after { content: "+"; font-family: var(--mono); color: var(--accent); font-size: 20px; line-height: 1; }
-  .faq details[open] summary::after { content: "–"; }
-  .faq details p { padding-bottom: 18px; color: var(--muted); }
-
-  /* contact */
-  .contact { background: var(--accent); color: var(--accent-ink); }
-  .contact .container { display: grid; grid-template-columns: 1.2fr 1fr; gap: 48px; align-items: center; }
-  .contact h2 { font-size: clamp(28px, 3.6vw, 40px); font-weight: 700; }
-  .contact p { opacity: .88; font-size: 17px; margin-top: 12px; max-width: 52ch; }
-  .contact-list { display: grid; gap: 12px; }
-  .contact-list a { display: flex; align-items: center; gap: 14px; padding: 14px 18px; border-radius: 10px; background: color-mix(in srgb, var(--accent-ink) 12%, transparent); text-decoration: none; font-weight: 600; transition: background .15s; }
-  .contact-list a:hover { background: color-mix(in srgb, var(--accent-ink) 20%, transparent); }
-  .contact-list small { display: block; font-weight: 400; opacity: .8; font-size: 13px; }
-  .contact-list svg { width: 22px; height: 22px; flex: none; }
-  .contact-list a[hidden] { display: none; }
-  @media (max-width: 900px) { .contact .container { grid-template-columns: 1fr; } }
-
-  footer.site { padding-block: 32px; font-size: 13px; color: var(--muted); }
-  footer.site .container { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); font-family: system-ui, 'Segoe UI', Roboto, Arial, sans-serif; line-height: 1.5; }
+  main { max-width: 40rem; margin: 0 auto; padding: 2.5rem 1rem 3rem; }
+  .brand { display: flex; align-items: center; gap: .6rem; color: var(--brand); font-weight: 800; letter-spacing: .3px; }
+  .brand svg { flex-shrink: 0; }
+  h1 { font-size: clamp(1.6rem, 5vw, 2.1rem); line-height: 1.2; margin: 1.5rem 0 .5rem; }
+  .lead { color: var(--muted); margin: 0 0 1.75rem; font-size: 1.05rem; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 1.25rem 1.25rem; margin-bottom: 1rem; }
+  h2 { font-size: 1.05rem; margin: 0 0 .75rem; }
+  ol { margin: 0; padding-left: 1.25rem; } li { margin: .35rem 0; }
+  .results { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; margin-top: .25rem; }
+  @media (max-width: 30rem) { .results { grid-template-columns: 1fr; } }
+  .res { border-radius: 10px; padding: .75rem .85rem; font-size: .92rem; }
+  .res b { display: block; margin-bottom: .2rem; }
+  .ok { background: var(--brand-soft); } .ok b { color: var(--brand); }
+  .no { background: color-mix(in srgb, var(--bad) 12%, transparent); } .no b { color: var(--bad); }
+  form { display: flex; gap: .5rem; flex-wrap: wrap; }
+  input { flex: 1 1 16rem; min-width: 0; padding: .7rem .8rem; border-radius: 10px; border: 1px solid var(--line); background: var(--bg); color: var(--text); font: inherit; }
+  button { padding: .7rem 1.1rem; border: 0; border-radius: 10px; background: var(--brand); color: #fff; font: inherit; font-weight: 700; cursor: pointer; }
+  .err { color: var(--bad); font-size: .9rem; margin: .5rem 0 0; min-height: 1.2em; }
+  .small { color: var(--muted); font-size: .88rem; margin: .6rem 0 0; }
+  footer { color: var(--muted); font-size: .82rem; text-align: center; margin-top: 2rem; }
 </style>
 </head>
 <body>
-
-<nav class="nav" aria-label="Main">
-  <div class="container">
-    <a class="brand" href="#top">
-      <svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="7" fill="var(--accent)"/><rect x="12" y="5" width="8" height="5" rx="1.5" fill="#c9b6ec"/><rect x="12.5" y="10" width="7" height="17" rx="3.5" fill="#fff"/></svg>
-      CDMS
-    </a>
-    <div class="nav-links">
-      <a href="#features">Features</a>
-      <a href="#occupational">APE / PEME</a>
-      <a href="#pricing">Pricing</a>
-      <a href="#faq">FAQ</a>
-      <a class="signin" href="https://cdmslabs.app/login">Sign in</a>
-      <a class="btn btn-primary" href="#contact">Book a demo</a>
-    </div>
-  </div>
-</nav>
-
-<main id="top">
-  <section class="hero">
-    <div class="container">
-      <div class="hero-copy">
-        <span class="eyebrow">For Philippine clinics &amp; diagnostic centers</span>
-        <h1>From registration to <em>released result</em>, in one system.</h1>
-        <p class="lede">Laboratory, imaging, ultrasound, cardiology and corporate APE/PEME, with the billing your cashier actually deals with: senior citizen and PWD discounts, BIR receipts, HMO/LOA, GCash and Maya.</p>
-        <div class="hero-ctas">
-          <a class="btn btn-primary" href="#contact">Book a free demo</a>
-          <a class="btn btn-ghost" href="#pricing">See pricing</a>
-        </div>
-        <p class="hero-note">From <strong class="num">₱3,000</strong> a month per branch. No large upfront license.</p>
-      </div>
-
-      <figure class="report" aria-label="Example laboratory report with QR verification" style="margin:0">
-        <div class="report-head">
-          <div><strong>LABORATORY REPORT</strong><span>Hematology · Complete Blood Count</span></div>
-          <span class="num">ACC-2026-004821</span>
-        </div>
-        <div class="report-meta">
-          <span>Patient <b>Dela Cruz, Maria S.</b></span>
-          <span>Age/Sex <b>67 / F</b></span>
-          <span>Collected <b>Sep 25, 08:14</b></span>
-          <span>Released <b>Sep 25, 10:02</b></span>
-        </div>
-        <table>
-          <thead><tr><th>Test</th><th>Result</th><th></th><th>Reference</th></tr></thead>
-          <tbody>
-            <tr><td>Hemoglobin</td><td class="v">108</td><td><span class="flag l">L</span></td><td class="r">120–160 g/L</td></tr>
-            <tr><td>Hematocrit</td><td class="v">0.34</td><td><span class="flag l">L</span></td><td class="r">0.37–0.47</td></tr>
-            <tr><td>WBC</td><td class="v">11.8</td><td><span class="flag h">H</span></td><td class="r">5.0–10.0 ×10⁹/L</td></tr>
-            <tr><td>Platelets</td><td class="v">265</td><td></td><td class="r">150–400 ×10⁹/L</td></tr>
-          </tbody>
-        </table>
-        <div class="report-foot">
-          <div class="sig"><strong>R. Santos, RMT</strong>Verified by</div>
-          <div class="sig"><strong>A. Reyes, MD, FPSP</strong>Pathologist</div>
-          <svg class="qr" viewBox="0 0 21 21" aria-hidden="true" shape-rendering="crispEdges"><rect width="21" height="21" fill="var(--surface)"/><g fill="var(--ink)"><path d="M0 0h7v7H0zM1 1v5h5V1zM2 2h3v3H2zM14 0h7v7h-7zM15 1v5h5V1zM16 2h3v3h-3zM0 14h7v7H0zM1 15v5h5v-5zM2 16h3v3H2z" fill-rule="evenodd"/><path d="M8 0h1v1H8zM10 0h2v1h-2zM9 2h2v1H9zM8 4h1v2H8zM11 3h1v3h-1zM9 6h1v1H9zM0 8h2v1H0zM3 8h1v2H3zM5 9h2v1H5zM8 8h3v1H8zM12 8h1v2h-1zM14 8h2v1h-2zM17 8h1v1h-1zM19 8h2v2h-2zM1 10h1v2H1zM6 11h1v1H6zM9 10h2v2H9zM13 10h2v1h-2zM16 10h2v1h-2zM4 12h1v1H4zM8 12h1v2H8zM11 12h2v1h-2zM15 12h1v2h-1zM18 12h2v1h-2zM10 14h1v1h-1zM12 14h2v2h-2zM17 14h1v1h-1zM19 14h2v1h-2zM8 16h2v1H8zM16 16h2v2h-2zM20 16h1v2h-1zM9 18h1v3H9zM11 17h1v1h-1zM13 18h2v1h-2zM18 19h2v1h-2zM11 20h3v1h-3zM16 20h1v1h-1z"/></g></svg>
-        </div>
-        <div class="stamp" role="img" aria-label="Verified authentic">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>
-          Scan verified · Authentic
-        </div>
-      </figure>
-    </div>
-  </section>
-
-  <div class="local">
-    <div class="container">
-      <span class="label">Made for how clinics here work:</span>
-      <span class="chip">Senior citizen &amp; PWD discounts</span>
-      <span class="chip">BIR official receipts</span>
-      <span class="chip">VAT inclusive / exclusive</span>
-      <span class="chip">GCash &amp; Maya</span>
-      <span class="chip">APE / PEME</span>
-    </div>
+<main>
+  <!-- Brand: change the name here to your company's. -->
+  <div class="brand">
+    <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M12 3l7 3v5c0 4.5-3 8.3-7 10-4-1.7-7-5.5-7-10V6l7-3z"/><path d="M8.5 12l2.5 2.5 4.5-5"/>
+    </svg>
+    <span>CDMS Labs · Result Verification</span>
   </div>
 
-  <section class="block" id="demo">
-    <div class="container">
-      <div class="block-head">
-        <span class="eyebrow">See it in action</span>
-        <h2>One patient, one company, one day at the clinic.</h2>
-        <p class="lede">A walk-in patient from registration to a released, QR-verified result in her portal — then a company's annual physical exam, the transmittal, the statement of account and the daily sales report.</p>
-      </div>
-      <div class="demo-frame">
-        <iframe id="demo-video" src="https://www.youtube-nocookie.com/embed/CLkAgdaz42k?enablejsapi=1&amp;rel=0&amp;modestbranding=1&amp;playsinline=1"
-          title="CDMS walkthrough: one patient, one company, one day at the clinic" loading="lazy"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-          referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-      </div>
-      <ol class="chapters" id="demo-chapters" aria-label="Jump to a step in the full walkthrough">
-        <li><button type="button" data-t="4.78"><span class="t">0:04</span>Register a walk-in patient</button></li>
-        <li><button type="button" data-t="38.95"><span class="t">0:38</span>Create the order</button></li>
-        <li><button type="button" data-t="65.7"><span class="t">1:05</span>Cashier and payment</button></li>
-        <li><button type="button" data-t="87.41"><span class="t">1:27</span>Specimen collection</button></li>
-        <li><button type="button" data-t="99.04"><span class="t">1:39</span>Receive in the lab</button></li>
-        <li><button type="button" data-t="120.23"><span class="t">2:00</span>Encode results</button></li>
-        <li><button type="button" data-t="154.57"><span class="t">2:34</span>Approve and release</button></li>
-        <li><button type="button" data-t="188.2"><span class="t">3:08</span>Patient portal and QR check</button></li>
-        <li><button type="button" data-t="199.35"><span class="t">3:19</span>Company price catalog</button></li>
-        <li><button type="button" data-t="222.49"><span class="t">3:42</span>APE registration</button></li>
-        <li><button type="button" data-t="247.47"><span class="t">4:07</span>APE intake</button></li>
-        <li><button type="button" data-t="278.46"><span class="t">4:38</span>Physician exam</button></li>
-        <li><button type="button" data-t="314.79"><span class="t">5:14</span>Transmittal</button></li>
-        <li><button type="button" data-t="338.71"><span class="t">5:38</span>Statement of account</button></li>
-        <li><button type="button" data-t="387.65"><span class="t">6:27</span>Daily sales report</button></li>
-        <li><button type="button" data-t="406.69"><span class="t">6:46</span>Quick tour</button></li>
-      </ol>
+  <h1>Is this result genuine?</h1>
+  <p class="lead">Laboratory and imaging results from our partner clinics carry a QR code signed by the clinic that released them.
+    Scan it to confirm the result is real and unchanged.</p>
+
+  <section class="card">
+    <h2>How to check a result</h2>
+    <ol>
+      <li>Open your phone's camera and point it at the <b>QR code</b> at the top of the printed result.</li>
+      <li>Tap the link that appears. It opens the clinic's verification page.</li>
+      <li>Compare the patient, examination and release date shown with the paper.</li>
+    </ol>
+    <div class="results" style="margin-top: 1rem">
+      <div class="res ok"><b>✓ Genuine result</b>Issued by the clinic and not altered. The details should match the paper.</div>
+      <div class="res no"><b>✗ Not genuine</b>The code was changed or did not come from the clinic. Contact the clinic before using the result.</div>
     </div>
   </section>
 
-  <section class="block" id="features">
-    <div class="container">
-      <div class="block-head">
-        <span class="eyebrow">How a patient moves through CDMS</span>
-        <h2>Every step connected, so nothing gets typed twice.</h2>
-      </div>
-      <ol class="flow">
-        <li><h3>Register</h3><p>Duplicate patients are caught before they're created.</p></li>
-        <li><h3>Pay</h3><p>Discounts, VAT and OR numbers are computed for the cashier.</p></li>
-        <li><h3>Collect</h3><p>Barcode labels, with one tube shared by tests that can share it.</p></li>
-        <li><h3>Test</h3><p>Values are flagged high, low or critical as they're typed.</p></li>
-        <li><h3>Approve</h3><p>Medtech verification, then pathologist or head medtech approval.</p></li>
-        <li><h3>Release</h3><p>A PDF with a QR code, also in the patient's own portal.</p></li>
-      </ol>
-    </div>
+  <section class="card">
+    <h2>Can't scan? Paste the link</h2>
+    <form id="f">
+      <input id="code" type="text" inputmode="url" autocomplete="off" placeholder="https://verify.cdmslabs.app/…/#…" aria-label="Verification link">
+      <button type="submit">Check</button>
+    </form>
+    <p class="err" id="err" role="alert"></p>
+    <p class="small">Use the full link from the QR code (a scanner app can copy it). A preliminary result has no link: only released results can be verified.</p>
   </section>
 
-  <section class="block" style="padding-top:0">
-    <div class="container">
-      <div class="highlights">
-        <article class="hl">
-          <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg></div>
-          <h3>Critical values can't slip out</h3>
-          <p>A panic value raises an alert, and the result can't be released until someone records who was notified, how, and that they read it back.</p>
-        </article>
-        <article class="hl">
-          <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><path d="M14 14h3v3h-3zM20 14v.01M14 20h.01M17 20h4v-3"/></svg></div>
-          <h3>Reports anyone can verify</h3>
-          <p>Every released report and medical certificate carries a QR code. Employers and doctors scan it to confirm it's genuine, which stops fake results.</p>
-        </article>
-        <article class="hl">
-          <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg></div>
-          <h3>A history nobody can quietly change</h3>
-          <p>Corrections need a reason and keep the old value. The audit trail is chained, so any tampering shows up when it's checked.</p>
-        </article>
-      </div>
-    </div>
+  <section class="card">
+    <h2>Your privacy</h2>
+    <p class="small" style="margin: 0">The check runs on your own phone. The result details inside the QR code are never sent to this website,
+      and no results are stored here. Only the clinic can see the full result. If a result was amended after it was printed, ask the
+      clinic for the current version.</p>
   </section>
 
-  <section class="block" style="padding-top:0">
-    <div class="container">
-      <div class="block-head">
-        <span class="eyebrow">Modules</span>
-        <h2>Start with the lab. Add departments as you grow.</h2>
-      </div>
-      <div class="modules">
-        <div class="mod"><h3>Laboratory</h3><p>Worklists, reference ranges by age and sex, critical values, amendments with history.</p></div>
-        <div class="mod"><h3>Imaging &amp; Ultrasound</h3><p>Report templates, OB biometry and fetal weight, saved phrases, attached images.</p></div>
-        <div class="mod"><h3>Cardiology</h3><p>ECG, 2D echo, stress echo, treadmill test and cardiovascular clearance.</p></div>
-        <div class="mod"><h3>Consultations</h3><p>Doctor worklist, prescriptions, referrals and medical certificates.</p></div>
-        <div class="mod"><h3>Billing &amp; HMO</h3><p>Invoices, split payments, HMO/LOA coverage, refunds and cash drawer reports.</p></div>
-        <div class="mod"><h3>Front desk</h3><p>Appointments, queues and a waiting-room display screen.</p></div>
-        <div class="mod"><h3>Quality &amp; accreditation</h3><p>QC with Westgard rules, turnaround time reports and document control.</p></div>
-        <div class="mod"><h3>Operations</h3><p>Inventory, equipment and referring-doctor commissions.</p></div>
-      </div>
-    </div>
-  </section>
-
-  <section class="block spot" id="occupational">
-    <div class="container">
-      <div style="display:grid; gap:22px">
-        <span class="eyebrow">Corporate APE / PEME</span>
-        <h2 style="font-size:clamp(28px,3.6vw,40px); font-weight:700; letter-spacing:-.015em">Run a 300-employee APE without the spreadsheet chaos.</h2>
-        <ul class="spot-list">
-          <li><div><b>Bulk import and batch registration</b><span>Upload the company's employee list and register everyone at once.</span></div></li>
-          <li><div><b>Transmittals in PDF, Excel or CSV</b><span>Pending and completed exams tracked per batch.</span></div></li>
-          <li><div><b>Contracts and company billing</b><span>Package prices per company, invoiced on registration or completion.</span></div></li>
-          <li><div><b>An employer portal HR will like</b><span>They check status and fitness themselves, without seeing any medical details.</span></div></li>
-        </ul>
-      </div>
-      <div class="hr-view" aria-label="Example employer portal view">
-        <header><b>Employer portal · Acme Logistics</b><span>APE 2026 · 312 employees</span></header>
-        <div class="hr-scroll">
-          <table>
-            <thead><tr><th>Employee</th><th>Status</th><th>Fitness</th></tr></thead>
-            <tbody>
-              <tr><td>Bautista, J.</td><td>Released</td><td><span class="pill fit">Fit to work</span></td></tr>
-              <tr><td>Garcia, L.</td><td>Released</td><td><span class="pill restr">Fit, with restrictions</span></td></tr>
-              <tr><td>Mendoza, R.</td><td>In progress</td><td><span class="pill pend">Pending</span></td></tr>
-              <tr><td>Villanueva, C.</td><td>Released</td><td><span class="pill fit">Fit to work</span></td></tr>
-            </tbody>
-          </table>
-        </div>
-        <div class="hr-note">HR sees status and fitness only. Lab values, history and findings stay with the clinic.</div>
-      </div>
-    </div>
-  </section>
-
-  <section class="block" id="pricing">
-    <div class="container">
-      <div class="block-head">
-        <span class="eyebrow">Pricing</span>
-        <h2>Simple monthly plans.</h2>
-        <p class="lede">Unlimited users and patients on every plan. Hosting, updates and local support included.</p>
-      </div>
-      <div class="plans">
-        <article class="plan">
-          <div class="plan-head"><h3>Laboratory</h3></div>
-          <p class="for">For clinical laboratories and small clinics</p>
-          <div class="price"><span class="amt">₱5,000</span><span class="per">/ month per branch</span></div>
-          <ul class="feat">
-            <li>Registration, orders and cashiering</li>
-            <li>Senior/PWD discounts, VAT </li>
-            <li>Specimen barcodes and tracking</li>
-            <li>Automatic high / low / critical flags</li>
-            <li>Verification and pathologist approval</li>
-            <li>Doctor consultations and prescriptions</li>
-            <li>QR-verified PDF reports and patient portal</li>
-            <li>Quality control, TAT and sales reports</li>
-          </ul>
-          <a class="btn btn-ghost" href="#contact">Book a demo</a>
-        </article>
-        <article class="plan featured">
-          <div class="plan-head"><h3>Complete</h3><span class="tag">Most chosen</span></div>
-          <p class="for">For diagnostic centers with imaging, heart studies and APE / PEME</p>
-          <div class="price"><span class="amt">₱15,000</span><span class="per">/ month for up to 2 branches · ₱4,000 / month each branch after</span></div>
-          <ul class="feat">
-            <li class="inherit">Everything in Laboratory, plus</li>
-            <li>X-ray and ultrasound with report templates</li>
-            <li>ECG, 2D echo, stress echo and treadmill</li>
-            <li>Appointments and queue display</li>
-            <li>Inventory, equipment and commissions</li>
-            <li>APE / PEME programs and bulk registration</li>
-            <li>QR-verified fitness certificates</li>
-            <li>Company contracts, transmittals</li>
-          </ul>
-          <a class="btn btn-primary" href="#contact">Book a demo</a>
-        </article>
-        <article class="plan">
-          <div class="plan-head"><h3>Multi User LAN Setup Offline</h3></div>
-          <p class="for">For diagnostic centers with imaging, and APE / PEME</p>
-          <div class="price"><span class="amt">₱100,000</span><span class="per">one-time · succeeding years ₱10,000 only</span></div>
-          <ul class="feat">
-            <li>Registration, orders and cashiering</li>
-            <li>Automatic high / low / critical flags</li>
-            <li>Doctor consultations and prescriptions</li>
-            <li>X-ray and ultrasound with report templates</li>
-            <li>APE / PEME programs and bulk registration</li>
-            <li>Company contracts, transmittals</li>
-          </ul>
-          <div class="addons">
-            <span class="addons-title">Optional add-ons · priced per module</span>
-            <ul>
-              <li><span>Accounting</span><a href="#contact" data-addon="Accounting">Email us for pricing</a></li>
-              <li><span>Cardiology</span><a href="#contact" data-addon="Cardiology">Email us for pricing</a></li>
-              <li><span>CT Scan</span><a href="#contact" data-addon="CT Scan">Email us for pricing</a></li>
-            </ul>
-          </div>
-          <div class="plan-cta">
-            <a class="btn btn-ghost" href="https://github.com/xxxxx5x/clinicsys-releases/releases/latest" target="_blank" rel="noopener">Start your free 30-day trial</a>
-            <p class="cta-note">No fee, no card needed. Download and try it in your clinic today.</p>
-          </div>
-        </article>
-      </div>
-      <div class="pricing-sub">
-        <h3>One-time fees</h3>
-        <p>Setup gets your clinic running on your own tests, prices and report layouts. Nothing here repeats monthly.</p>
-        <div class="fees-wrap">
-          <table class="fees">
-            <thead><tr><th>Service</th><th class="amt">Fee</th></tr></thead>
-            <tbody>
-              <tr><td>Standard setup<small>Your test catalog, prices and reference ranges; letterhead and report layouts; signatories; user accounts and roles; two days of on-site or online training</small></td><td class="amt">₱50,000</td></tr>
-              <tr><td>Each additional branch setup<small>Branch, users and queues configured; one day of training</small></td><td class="amt">₱15,000</td></tr>
-              <tr><td>Data migration from your current system<small>Patient records and history; quoted after we review your data</small></td><td class="amt">from ₱40,000</td></tr>
-              <tr><td>Custom features and reports<small>A fixed price you approve before any work starts</small></td><td class="amt">Quoted per request</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-      <!-- Cost estimator hidden for now. To restore, remove this comment wrapper.
-      <div class="pricing-sub">
-        <h3>Estimate your cost</h3>
-        <div class="calc">
-          <div class="calc-fields">
-            <div>
-              <label class="calc-label" for="calc-plan">Plan</label>
-              <select id="calc-plan">
-                <option value="3000">Laboratory · ₱3,000</option>
-                <option value="10000" selected>Complete · ₱10,000</option>
-              </select>
-            </div>
-            <div>
-              <label class="calc-label" for="calc-branches">Number of branches</label>
-              <input id="calc-branches" type="number" inputmode="numeric" min="1" max="50" value="1">
-            </div>
-            <div class="calc-checks">
-              <label><input id="calc-annual" type="checkbox"> Pay yearly (2 months free)</label>
-              <label><input id="calc-founding" type="checkbox"> Founding clinic offer</label>
-            </div>
-          </div>
-          <div class="calc-totals" aria-live="polite">
-            <div class="calc-row"><span>First branch</span><span class="num" id="t-first"></span></div>
-            <div class="calc-row"><span>Additional branches (25% off each)</span><span class="num" id="t-extra"></span></div>
-            <div class="calc-row"><span>Monthly subscription</span><span class="num" id="t-month"></span></div>
-            <div class="calc-row"><span>One-time setup</span><span class="num"><s id="t-setup-was" hidden></s> <span id="t-setup"></span></span></div>
-            <div class="calc-row big"><span>First year total</span><span class="num" id="t-year"></span></div>
-            <p class="calc-note"><span id="t-note"></span> Excludes data migration.</p>
-          </div>
-        </div>
-      </div>
-      -->
-      <div class="pricing-notes">
-        <div class="note-card offer">
-          <span class="eyebrow">Founding clinic offer · limited slots</span>
-          <h3>Be one of our first partner clinics</h3>
-          <ul>
-            <li>50% off setup</li>
-            <li>30% off your first 3 months</li>
-            <li>Direct line to the developer</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="block" style="padding-top:0">
-    <div class="container">
-      <div class="block-head">
-        <span class="eyebrow">Why clinics choose us</span>
-        <h2>A system you can shape, from people you can call.</h2>
-      </div>
-      <div class="why">
-        <div><h3>Changes in days, not quarters</h3><p>Your pathologist wants the report laid out differently? Tell us. It's often done within the week.</p></div>
-        <div><h3>Talk to the builder</h3><p>Support comes from the people who wrote the system, not a ticket queue.</p></div>
-        <div><h3>Configured, not hard-coded</h3><p>Tests, ranges, prices, taxes, roles and workflow rules are your settings to change.</p></div>
-      </div>
-    </div>
-  </section>
-
-  <section class="block" id="faq" style="padding-top:0">
-    <div class="container">
-      <div class="block-head">
-        <span class="eyebrow">Questions</span>
-        <h2>Frequently asked</h2>
-      </div>
-      <div class="faq">
-        <details>
-          <summary>Do we need to install anything?</summary>
-          <p>No. CDMS runs in the cloud and works in any modern browser on your existing computers and tablets. You'll need an internet connection. We suggest a backup connection, like pocket Wi-Fi, at the front desk.</p>
-        </details>
-        <details>
-          <summary>Can we move our existing patient records?</summary>
-          <p>Yes. We review your current data and quote the migration before any work starts.</p>
-        </details>
-        <details>
-          <summary>How is patient data protected?</summary>
-          <p>Two-factor login, role-based permissions, encrypted ID numbers, a tamper-evident audit trail, and each clinic's data kept separate at the database level. Employers only ever see what you allow.</p>
-        </details>
-        <details>
-          <summary>Can the head medtech approve results, not only the pathologist?</summary>
-          <p>Yes. Who can verify, approve and release is set per role, and you can choose one-step or two-step verification.</p>
-        </details>
-        <details>
-          <summary>Does it connect to our analyzers?</summary>
-          <p>Not yet out of the box. Results are entered through a fast keyboard-driven screen. Analyzer connections can be quoted as a custom project.</p>
-        </details>
-        <details>
-          <summary>Can we cancel?</summary>
-          <p>Monthly plans can be cancelled with 30 days' notice.</p>
-        </details>
-      </div>
-    </div>
-  </section>
-
-  <section class="block contact" id="contact">
-    <div class="container">
-      <div>
-        <h2>See it running on your own tests.</h2>
-        <p>Book a free 20-minute demo. We'll follow one patient from registration to a released, QR-verified result, and talk about what your clinic needs.</p>
-      </div>
-      <div class="contact-list">
-        <a id="c-viber" href="#">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.4 8.4 0 0 1-12.4 7.4L3 21l2.1-5.6A8.4 8.4 0 1 1 21 11.5z"/></svg>
-          <span>Message us on Viber<small id="c-viber-label"></small></span>
-        </a>
-        <a id="c-phone" href="#">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg>
-          <span>Call us<small id="c-phone-label"></small></span>
-        </a>
-        <a id="c-email" href="#">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/></svg>
-          <span>Email us<small id="c-email-label"></small></span>
-        </a>
-        <a id="c-facebook" href="#" target="_blank" rel="noopener">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
-          <span>Message us on Facebook<small id="c-facebook-label"></small></span>
-        </a>
-      </div>
-    </div>
-  </section>
+  <footer>© <span id="y"></span> CDMS Labs</footer>
 </main>
-
-<footer class="site">
-  <div class="container">
-    <span id="f-business"></span>
-    <span>Prices in Philippine pesos, excluding applicable taxes.</span>
-  </div>
-</footer>
-
 <script>
-  // ── Edit your contact details here. Leave a value empty ("") to hide that option. ──
-  var CONTACT = {
-    business: "CDMS",              // your business or trade name, shown in the footer
-    mobile: "",                    // shown as typed; used for Call and Viber
-    email: "preregstove@gmail.com",
-    facebook: ""                   // full page URL, e.g. https://m.me/yourpage
-  };
-
-  (function () {
-    var digits = CONTACT.mobile.replace(/[^\d+]/g, "");
-    function set(id, href, label) {
-      var a = document.getElementById(id);
-      if (!href) { a.hidden = true; return; }
-      a.href = href;
-      document.getElementById(id + "-label").textContent = label;
+  document.getElementById('y').textContent = new Date().getFullYear();
+  document.getElementById('f').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var text = document.getElementById('code').value.trim();
+    var err = document.getElementById('err');
+    err.textContent = '';
+    // Only links to this site's clinic pages, with the signed code after '#', are followed.
+    var url;
+    try { url = new URL(text); } catch (x) { url = null; }
+    if (!url || url.host !== location.host || !url.hash || url.hash.length < 20 || url.pathname === '/') {
+      err.textContent = text.indexOf('CLINICSYS-VERIFY:') === 0
+        ? 'This code can only be checked at the clinic that issued it.'
+        : 'This is not a result verification link. Scan the QR code on the printed result, or copy its full link.';
+      return;
     }
-    set("c-viber", digits && "viber://chat?number=" + encodeURIComponent(digits), CONTACT.mobile);
-    set("c-phone", digits && "tel:" + digits, CONTACT.mobile);
-    set("c-email", CONTACT.email && "mailto:" + CONTACT.email + "?subject=" + encodeURIComponent("CDMS demo request"), CONTACT.email);
-    set("c-facebook", CONTACT.facebook, "Facebook Messenger");
-    // Add-on module links open an email asking for that module's price; without an email they fall back to #contact.
-    if (CONTACT.email) {
-      Array.prototype.forEach.call(document.querySelectorAll("a[data-addon]"), function (a) {
-        a.href = "mailto:" + CONTACT.email + "?subject=" + encodeURIComponent("CDMS Multi User LAN add-on pricing: " + a.dataset.addon);
-      });
-    }
-    document.getElementById("f-business").textContent = "© " + new Date().getFullYear() + " " + CONTACT.business;
-  })();
-
-  // Demo video: YouTube embed driven through the IFrame API so the chapter buttons can seek.
-  // Each chapter button carries data-t in seconds. A click before the player is ready is
-  // queued and applied in onReady.
-  (function () {
-    var frame = document.getElementById("demo-video");
-    var chapters = Array.prototype.slice.call(document.querySelectorAll("#demo-chapters button"));
-    var player = null, ready = false, pending = null, timer = null;
-
-    function mark() {
-      var t = player.getCurrentTime(), current = null;
-      chapters.forEach(function (b) { if (Number(b.dataset.t) <= t + 0.5) current = b; });
-      chapters.forEach(function (b) { b.setAttribute("aria-current", b === current ? "true" : "false"); });
-    }
-    function seek(at) {
-      if (!ready) { pending = at; return; }
-      player.seekTo(at, true);
-      player.playVideo();
-    }
-    chapters.forEach(function (b) {
-      b.addEventListener("click", function () {
-        seek(Number(b.dataset.t));
-        frame.scrollIntoView({ behavior: "smooth", block: "center" });
-      });
-    });
-
-    window.onYouTubeIframeAPIReady = function () {
-      player = new YT.Player(frame, {
-        events: {
-          onReady: function () { ready = true; if (pending !== null) { seek(pending); pending = null; } },
-          onStateChange: function (e) {
-            clearInterval(timer);
-            if (e.data === YT.PlayerState.PLAYING) timer = setInterval(mark, 500);
-            mark();
-          },
-        },
-      });
-    };
-    var s = document.createElement("script");
-    s.src = "https://www.youtube.com/iframe_api";
-    document.head.appendChild(s);
-  })();
-
-  // Pricing calculator. Keep these numbers in step with the plan cards and fees table above.
-  (function () {
-    var SETUP = 50000, BRANCH_SETUP = 15000;
-    var peso = function (n) { return "₱" + Math.round(n).toLocaleString("en-PH"); };
-    var el = function (id) { return document.getElementById(id); };
-    if (!el("calc-plan")) return;
-    function update() {
-      var base = Number(el("calc-plan").value);
-      var branches = Math.max(1, Math.min(50, Math.floor(Number(el("calc-branches").value) || 1)));
-      var annual = el("calc-annual").checked;
-      var founding = el("calc-founding").checked;
-
-      var extra = (branches - 1) * base * 0.75;
-      var month = base + extra;
-      var fullSetup = SETUP + (branches - 1) * BRANCH_SETUP;
-      var setup = founding ? fullSetup - SETUP * 0.5 : fullSetup;
-      var year = annual ? month * 10 : founding ? month * 3 * 0.7 + month * 9 : month * 12;
-
-      el("t-first").textContent = peso(base);
-      el("t-extra").textContent = branches > 1 ? peso(extra) : "—";
-      el("t-month").textContent = peso(month);
-      el("t-setup-was").hidden = !founding;
-      el("t-setup-was").textContent = peso(fullSetup);
-      el("t-setup").textContent = peso(setup);
-      el("t-year").textContent = peso(year + setup);
-      el("t-note").textContent = annual
-        ? "Yearly billing: 12 months for the price of 10, plus setup."
-        : founding
-          ? "Includes 30% off the first 3 months, plus setup."
-          : "12 monthly payments, plus setup.";
-    }
-    ["calc-plan", "calc-branches", "calc-annual", "calc-founding"].forEach(function (id) {
-      el(id).addEventListener("input", update);
-      el(id).addEventListener("change", update);
-    });
-    update();
-  })();
+    location.href = url.href;
+  });
 </script>
 </body>
 </html>
